@@ -5,7 +5,8 @@ import { RubricItem } from './types';
 import { RubricSlider } from './components/RubricSlider';
 import { ScoreSummary } from './components/ScoreSummary';
 import { MizaLogo } from './components/MizaLogo';
-import { Download, RefreshCw } from 'lucide-react';
+import { RubricGuide } from './components/RubricGuide';
+import { Download, RefreshCw, BookOpen } from 'lucide-react';
 
 const App: React.FC = () => {
   const [rubricItems, setRubricItems] = useState<RubricItem[]>([]);
@@ -13,6 +14,7 @@ const App: React.FC = () => {
   const [juryName, setJuryName] = useState('');
   const [scores, setScores] = useState<Record<string, number>>({});
   const [isLoaded, setIsLoaded] = useState(false);
+  const [showGuide, setShowGuide] = useState(false);
 
   // Load rubric data on mount
   useEffect(() => {
@@ -96,10 +98,18 @@ const App: React.FC = () => {
             />
           </div>
 
-          <div className="hidden md:block">
+          <div className="hidden md:flex items-center gap-2">
+            <button 
+              onClick={() => setShowGuide(true)}
+              className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:text-cyan-700 hover:bg-slate-100 rounded-lg transition-colors text-sm font-medium"
+              title="Voir la grille de référence"
+            >
+              <BookOpen size={20} />
+              <span className="hidden lg:inline">Guide</span>
+            </button>
             <button 
               onClick={handleReset}
-              className="text-slate-500 hover:text-red-600 transition-colors p-2"
+              className="text-slate-500 hover:text-red-600 transition-colors p-2 rounded-lg hover:bg-slate-100"
               title="Réinitialiser"
             >
               <RefreshCw size={20} />
@@ -150,12 +160,20 @@ const App: React.FC = () => {
       {/* Floating Bottom Bar for Mobile/Desktop Actions */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-lg p-4 z-40">
         <div className="max-w-5xl mx-auto flex justify-between items-center">
-            <button 
-              onClick={handleReset} 
-              className="md:hidden text-slate-500 hover:text-red-600 font-medium text-sm flex items-center gap-2"
-            >
-              <RefreshCw size={18} /> Reset
-            </button>
+            <div className="flex items-center gap-4 md:hidden">
+               <button 
+                onClick={handleReset} 
+                className="text-slate-500 hover:text-red-600"
+              >
+                <RefreshCw size={20} />
+              </button>
+              <button 
+                onClick={() => setShowGuide(true)} 
+                className="text-slate-500 hover:text-cyan-700"
+              >
+                <BookOpen size={20} />
+              </button>
+            </div>
 
             <div className="text-sm text-slate-500 hidden sm:block">
               Total: <span className="font-bold text-slate-900 text-lg">
@@ -173,6 +191,14 @@ const App: React.FC = () => {
             </button>
         </div>
       </div>
+
+      {/* Reference Modal */}
+      <RubricGuide 
+        isOpen={showGuide} 
+        onClose={() => setShowGuide(false)} 
+        items={rubricItems} 
+      />
+
     </div>
   );
 };
