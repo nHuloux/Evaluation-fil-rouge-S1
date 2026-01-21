@@ -10,6 +10,7 @@ import { Download, RefreshCw } from 'lucide-react';
 const App: React.FC = () => {
   const [rubricItems, setRubricItems] = useState<RubricItem[]>([]);
   const [groupName, setGroupName] = useState('');
+  const [juryName, setJuryName] = useState('');
   const [scores, setScores] = useState<Record<string, number>>({});
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -38,6 +39,7 @@ const App: React.FC = () => {
       rubricItems.forEach(item => initialScores[item.id] = 0);
       setScores(initialScores);
       setGroupName('');
+      setJuryName('');
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
@@ -47,8 +49,10 @@ const App: React.FC = () => {
       alert("Veuillez saisir un nom de groupe avant d'exporter.");
       return;
     }
-    const csvContent = generateResultCSV(groupName, rubricItems, scores);
-    const filename = `Evaluation_${groupName.replace(/\s+/g, '_')}_${new Date().toISOString().slice(0,10)}.csv`;
+    const csvContent = generateResultCSV(groupName, juryName, rubricItems, scores);
+    const safeGroupName = groupName.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const safeJuryName = juryName ? `_${juryName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}` : '';
+    const filename = `Evaluation_${safeGroupName}${safeJuryName}_${new Date().toISOString().slice(0,10)}.csv`;
     downloadCSV(csvContent, filename);
   };
 
@@ -66,22 +70,29 @@ const App: React.FC = () => {
         <div className="max-w-6xl mx-auto px-4 py-3 md:py-4 flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex items-center gap-6">
              {/* Logo MIZA constructed with SVG */}
-             <MizaLogo />
+             <MizaLogo className="hidden sm:flex" />
              
              <div className="hidden md:block h-12 w-px bg-slate-200"></div>
              
-             <h1 className="text-xl font-bold text-slate-800 tracking-tight uppercase hidden md:block">
+             <h1 className="text-xl font-bold text-slate-800 tracking-tight uppercase">
                Notation fil rouge
              </h1>
           </div>
 
-          <div className="w-full md:w-auto flex-1 max-w-md mx-4 flex gap-2">
+          <div className="w-full md:w-auto flex-1 max-w-xl mx-4 flex flex-col sm:flex-row gap-2">
             <input 
               type="text" 
               placeholder="Nom du Groupe / Étudiants"
-              className="w-full px-4 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 outline-none transition-shadow placeholder:text-slate-400"
+              className="flex-1 px-4 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 outline-none transition-shadow placeholder:text-slate-400"
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
+            />
+            <input 
+              type="text" 
+              placeholder="Nom du Jury"
+              className="flex-1 sm:w-48 px-4 py-2 bg-white text-slate-900 border border-slate-300 rounded-lg focus:ring-2 focus:ring-cyan-600 focus:border-cyan-600 outline-none transition-shadow placeholder:text-slate-400"
+              value={juryName}
+              onChange={(e) => setJuryName(e.target.value)}
             />
           </div>
 

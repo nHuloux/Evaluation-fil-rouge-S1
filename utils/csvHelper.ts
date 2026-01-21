@@ -41,8 +41,8 @@ export const parseRubricCSV = (csvText: string): RubricItem[] => {
 /**
  * Generates a downloadable CSV string from the results.
  */
-export const generateResultCSV = (groupName: string, items: RubricItem[], scores: Record<string, number>): string => {
-  const header = ['Groupe', 'Categorie', 'Critere', 'Note_Attribuee', 'Points_Max', 'Niveau_Atteint'];
+export const generateResultCSV = (groupName: string, juryName: string, items: RubricItem[], scores: Record<string, number>): string => {
+  const header = ['Groupe', 'Jury', 'Categorie', 'Critere', 'Note_Attribuee', 'Points_Max', 'Niveau_Atteint'];
   
   const rows = items.map(item => {
     const score = scores[item.id] || 0;
@@ -57,6 +57,7 @@ export const generateResultCSV = (groupName: string, items: RubricItem[], scores
 
     return [
       escape(groupName),
+      escape(juryName),
       escape(item.category),
       escape(item.criteria),
       score.toString(),

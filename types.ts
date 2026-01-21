@@ -11,6 +11,7 @@ export interface RubricItem {
 
 export interface EvaluationState {
   groupName: string;
+  juryName: string;
   scores: Record<string, number>; // Maps RubricItem.id to score
 }
 
